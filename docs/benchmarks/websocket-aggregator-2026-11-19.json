@@ -1,0 +1,12 @@
+{
+  "cpu_seconds": 14.618034999999999,
+  "network_rx_bytes": 495709046,
+  "network_tx_bytes": 31912242,
+  "elapsed_seconds": 119.99757313728333,
+  "sampled_peak_memory_bytes": 68165632,
+  "image": [
+    "ghcr.io/reloading01/certstream-server-rust@sha256:7cabc7aa3b652ead3a1ca29d9e2ff2f720eb943373c56f2fcda94dcf9fbb2da8"
+  ],
+  "start": 1795100199.287592,
+  "end": 1795100319.287592
+}

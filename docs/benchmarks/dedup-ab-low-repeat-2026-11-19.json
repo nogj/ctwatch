@@ -1,0 +1,128 @@
+{
+  "trials": [
+    {
+      "elapsed_seconds": 4.874100923538208,
+      "cpu_seconds": 4.879932,
+      "average_cpu_cores": 1.001196338884497,
+      "network_rx_bytes": 0,
+      "memory_peak_bytes": 415719424,
+      "mode": "off",
+      "entries": 100000,
+      "workers": 2,
+      "certificate_cache_hits": 0,
+      "certificate_cache_misses": 100000,
+      "output_sha256": "8ae75d57d13b727c7107b46152da70824c4438183a50196965736e59397b0ae7",
+      "match_observations": 131,
+      "positive_control_domains": 32,
+      "watch_domains": 10034,
+      "ruleset_version": "a79bf5ee48d6316156f242cfee1ba6964b62734b708e697a8998dcbd6d910bc8"
+    },
+    {
+      "elapsed_seconds": 3.889740228652954,
+      "cpu_seconds": 3.8958119999999994,
+      "average_cpu_cores": 1.001560970910684,
+      "network_rx_bytes": 0,
+      "memory_peak_bytes": 421928960,
+      "mode": "on",
+      "entries": 100000,
+      "workers": 2,
+      "certificate_cache_hits": 43995,
+      "certificate_cache_misses": 56005,
+      "output_sha256": "8ae75d57d13b727c7107b46152da70824c4438183a50196965736e59397b0ae7",
+      "match_observations": 131,
+      "positive_control_domains": 32,
+      "watch_domains": 10034,
+      "ruleset_version": "a79bf5ee48d6316156f242cfee1ba6964b62734b708e697a8998dcbd6d910bc8"
+    },
+    {
+      "elapsed_seconds": 4.054275989532471,
+      "cpu_seconds": 4.057818000000001,
+      "average_cpu_cores": 1.0008736480882592,
+      "network_rx_bytes": 0,
+      "memory_peak_bytes": 421928960,
+      "mode": "on",
+      "entries": 100000,
+      "workers": 2,
+      "certificate_cache_hits": 43995,
+      "certificate_cache_misses": 56005,
+      "output_sha256": "8ae75d57d13b727c7107b46152da70824c4438183a50196965736e59397b0ae7",
+      "match_observations": 131,
+      "positive_control_domains": 32,
+      "watch_domains": 10034,
+      "ruleset_version": "a79bf5ee48d6316156f242cfee1ba6964b62734b708e697a8998dcbd6d910bc8"
+    },
+    {
+      "elapsed_seconds": 4.767777442932129,
+      "cpu_seconds": 4.7771120000000025,
+      "average_cpu_cores": 1.0019578424495696,
+      "network_rx_bytes": 0,
+      "memory_peak_bytes": 421928960,
+      "mode": "off",
+      "entries": 100000,
+      "workers": 2,
+      "certificate_cache_hits": 0,
+      "certificate_cache_misses": 100000,
+      "output_sha256": "8ae75d57d13b727c7107b46152da70824c4438183a50196965736e59397b0ae7",
+      "match_observations": 131,
+      "positive_control_domains": 32,
+      "watch_domains": 10034,
+      "ruleset_version": "a79bf5ee48d6316156f242cfee1ba6964b62734b708e697a8998dcbd6d910bc8"
+    },
+    {
+      "elapsed_seconds": 4.939715147018433,
+      "cpu_seconds": 4.950322,
+      "average_cpu_cores": 1.0021472600475696,
+      "network_rx_bytes": 0,
+      "memory_peak_bytes": 421928960,
+      "mode": "off",
+      "entries": 100000,
+      "workers": 2,
+      "certificate_cache_hits": 0,
+      "certificate_cache_misses": 100000,
+      "output_sha256": "8ae75d57d13b727c7107b46152da70824c4438183a50196965736e59397b0ae7",
+      "match_observations": 131,
+      "positive_control_domains": 32,
+      "watch_domains": 10034,
+      "ruleset_version": "a79bf5ee48d6316156f242cfee1ba6964b62734b708e697a8998dcbd6d910bc8"
+    },
+    {
+      "elapsed_seconds": 3.9775216579437256,
+      "cpu_seconds": 3.985664,
+      "average_cpu_cores": 1.0020470893074869,
+      "network_rx_bytes": 0,
+      "memory_peak_bytes": 421928960,
+      "mode": "on",
+      "entries": 100000,
+      "workers": 2,
+      "certificate_cache_hits": 43995,
+      "certificate_cache_misses": 56005,
+      "output_sha256": "8ae75d57d13b727c7107b46152da70824c4438183a50196965736e59397b0ae7",
+      "match_observations": 131,
+      "positive_control_domains": 32,
+      "watch_domains": 10034,
+      "ruleset_version": "a79bf5ee48d6316156f242cfee1ba6964b62734b708e697a8998dcbd6d910bc8"
+    }
+  ],
+  "medians": {
+    "off": {
+      "cpu_seconds": 4.879932,
+      "elapsed_seconds": 4.874100923538208,
+      "memory_peak_bytes": 421928960
+    },
+    "on": {
+      "cpu_seconds": 3.985664,
+      "elapsed_seconds": 3.9775216579437256,
+      "memory_peak_bytes": 421928960
+    }
+  },
+  "outputs_identical": true,
+  "cpu_reduction_fraction": 0.1832541928862944,
+  "wall_reduction_fraction": 0.18394762021949218,
+  "limitations": [
+    "Offline CPU analysis only; excludes network, DynamoDB and SQS.",
+    "Name caches are enabled in both variants; certificate dedup alone is toggled.",
+    "Positive controls add 32 captured domains to the same synthetic watchlist.",
+    "One batch at a time: isolates dedup and does not test maximum parallel throughput.",
+    "Cgroup memory peak is cumulative across trials; not an isolated per-trial peak."
+  ]
+}

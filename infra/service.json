@@ -1,0 +1,811 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CTWatch continuous Fargate reader, durable cursors and match outbox",
+  "Parameters": {
+    "ImageUri": {
+      "Type": "String"
+    },
+    "ConfigBucket": {
+      "Type": "String"
+    },
+    "TaskCpu": {
+      "Type": "String",
+      "Default": "8192",
+      "AllowedValues": [
+        "4096",
+        "8192",
+        "16384"
+      ]
+    },
+    "TaskMemory": {
+      "Type": "String",
+      "Default": "16384"
+    },
+    "Architecture": {
+      "Type": "String",
+      "Default": "ARM64",
+      "AllowedValues": [
+        "ARM64",
+        "X86_64"
+      ]
+    },
+    "Workers": {
+      "Type": "String",
+      "Default": "6",
+      "AllowedPattern": "[1-9][0-9]?"
+    },
+    "PollSeconds": {
+      "Type": "String",
+      "Default": "15",
+      "AllowedPattern": "[1-9][0-9]*"
+    },
+    "DesiredCount": {
+      "Type": "Number",
+      "Default": 0,
+      "AllowedValues": [
+        0,
+        1
+      ]
+    },
+    "StartMode": {
+      "Type": "String",
+      "Default": "head",
+      "AllowedValues": [
+        "head",
+        "beginning"
+      ]
+    }
+  },
+  "Resources": {
+    "Vpc": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.82.0.0/16",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {}
+    },
+    "GatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "InternetGatewayId": {
+          "Ref": "InternetGateway"
+        }
+      }
+    },
+    "RouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        }
+      }
+    },
+    "DefaultRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "InternetGateway"
+        }
+      },
+      "DependsOn": "GatewayAttachment"
+    },
+    "Subnet0": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "CidrBlock": "10.82.0.0/24",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            0,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        }
+      }
+    },
+    "Subnet0Route": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "Subnet0"
+        },
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        }
+      }
+    },
+    "Subnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "CidrBlock": "10.82.1.0/24",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            1,
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        }
+      }
+    },
+    "Subnet1Route": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "Subnet1"
+        },
+        "RouteTableId": {
+          "Ref": "RouteTable"
+        }
+      }
+    },
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "VpcId": {
+          "Ref": "Vpc"
+        },
+        "GroupDescription": "No inbound access; outbound HTTPS only",
+        "SecurityGroupEgress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 443,
+            "ToPort": 443,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "State": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "pending",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "PendingIndex",
+            "KeySchema": [
+              {
+                "AttributeName": "pending",
+                "KeyType": "HASH"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            }
+          }
+        ],
+        "StreamSpecification": {
+          "StreamViewType": "NEW_IMAGE"
+        },
+        "TimeToLiveSpecification": {
+          "AttributeName": "expires_at",
+          "Enabled": true
+        },
+        "SSESpecification": {
+          "SSEEnabled": true
+        },
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": true
+        }
+      },
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain"
+    },
+    "Queue": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "SqsManagedSseEnabled": true,
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 120
+      },
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain"
+    },
+    "Logs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/ctwatch/${AWS::StackName}"
+        },
+        "RetentionInDays": 14
+      }
+    },
+    "Cluster": {
+      "Type": "AWS::ECS::Cluster",
+      "Properties": {}
+    },
+    "TaskRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "runtime",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:PutItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "State",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:s3:::${ConfigBucket}/watchlist.json"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "ExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "runtime",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ecr:GetAuthorizationToken"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ecr:BatchCheckLayerAvailability",
+                    "ecr:GetDownloadUrlForLayer",
+                    "ecr:BatchGetImage"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:ecr:${AWS::Region}:${AWS::AccountId}:repository/*"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Logs",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "Task": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "Cpu": {
+          "Ref": "TaskCpu"
+        },
+        "Memory": {
+          "Ref": "TaskMemory"
+        },
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "RuntimePlatform": {
+          "CpuArchitecture": {
+            "Ref": "Architecture"
+          },
+          "OperatingSystemFamily": "LINUX"
+        },
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "TaskRole",
+            "Arn"
+          ]
+        },
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "ExecutionRole",
+            "Arn"
+          ]
+        },
+        "ContainerDefinitions": [
+          {
+            "Name": "ctwatch",
+            "Image": {
+              "Ref": "ImageUri"
+            },
+            "Essential": true,
+            "ReadonlyRootFilesystem": true,
+            "StopTimeout": 120,
+            "LinuxParameters": {
+              "InitProcessEnabled": true
+            },
+            "MountPoints": [
+              {
+                "SourceVolume": "scratch",
+                "ContainerPath": "/tmp"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "STATE_TABLE",
+                "Value": {
+                  "Ref": "State"
+                }
+              },
+              {
+                "Name": "AWS_DEFAULT_REGION",
+                "Value": {
+                  "Ref": "AWS::Region"
+                }
+              },
+              {
+                "Name": "WATCHLIST_URI",
+                "Value": {
+                  "Fn::Sub": "s3://${ConfigBucket}/watchlist.json"
+                }
+              },
+              {
+                "Name": "WORKERS",
+                "Value": {
+                  "Ref": "Workers"
+                }
+              },
+              {
+                "Name": "POLL_SECONDS",
+                "Value": {
+                  "Ref": "PollSeconds"
+                }
+              },
+              {
+                "Name": "START_MODE",
+                "Value": {
+                  "Ref": "StartMode"
+                }
+              }
+            ],
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "Logs"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "reader",
+                "mode": "non-blocking",
+                "max-buffer-size": "10m"
+              }
+            },
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "python -c \"import os,time; assert time.time()-os.path.getmtime('/tmp/ctwatch-health')<90\""
+              ],
+              "Interval": 30,
+              "Timeout": 5,
+              "Retries": 3,
+              "StartPeriod": 120
+            }
+          }
+        ],
+        "Volumes": [
+          {
+            "Name": "scratch"
+          }
+        ]
+      }
+    },
+    "Service": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "Cluster"
+        },
+        "TaskDefinition": {
+          "Ref": "Task"
+        },
+        "DesiredCount": {
+          "Ref": "DesiredCount"
+        },
+        "LaunchType": "FARGATE",
+        "PlatformVersion": "1.4.0",
+        "EnableECSManagedTags": true,
+        "DeploymentConfiguration": {
+          "MinimumHealthyPercent": 0,
+          "MaximumPercent": 100,
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true
+          }
+        },
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "Subnets": [
+              {
+                "Ref": "Subnet0"
+              },
+              {
+                "Ref": "Subnet1"
+              }
+            ],
+            "SecurityGroups": [
+              {
+                "Ref": "SecurityGroup"
+              }
+            ]
+          }
+        }
+      },
+      "DependsOn": [
+        "DefaultRoute",
+        "Subnet0Route",
+        "Subnet1Route"
+      ]
+    },
+    "PublisherRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "runtime",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:DescribeStream",
+                    "dynamodb:GetRecords",
+                    "dynamodb:GetShardIterator"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "State",
+                      "StreamArn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:ListStreams"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:UpdateItem"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "State",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:Query"
+                  ],
+                  "Resource": {
+                    "Fn::Sub": "${State.Arn}/index/PendingIndex"
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sqs:SendMessage"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "Queue",
+                      "Arn"
+                    ]
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": {
+                    "Fn::GetAtt": [
+                      "PublisherLogs",
+                      "Arn"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "PublisherLogs": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Sub": "/aws/lambda/${AWS::StackName}-publisher"
+        },
+        "RetentionInDays": 14
+      }
+    },
+    "Publisher": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": {
+          "Fn::Sub": "${AWS::StackName}-publisher"
+        },
+        "Runtime": "python3.12",
+        "Handler": "index.handler",
+        "Timeout": 60,
+        "MemorySize": 256,
+        "Role": {
+          "Fn::GetAtt": [
+            "PublisherRole",
+            "Arn"
+          ]
+        },
+        "Environment": {
+          "Variables": {
+            "STATE_TABLE": {
+              "Ref": "State"
+            },
+            "QUEUE_URL": {
+              "Ref": "Queue"
+            }
+          }
+        },
+        "Code": {
+          "ZipFile": "\"\"\"Lambda entry point; also scheduled to recover pending rows after stream retention.\"\"\"\n\nimport json\nimport logging\nimport os\nimport time\nfrom decimal import Decimal\n\nimport boto3\nfrom boto3.dynamodb.conditions import Key\nfrom boto3.dynamodb.types import TypeDeserializer\n\nLOGGER = logging.getLogger(__name__)\n\n\ndef json_default(value):\n    if isinstance(value, Decimal):\n        return int(value) if value % 1 == 0 else float(value)\n    raise TypeError(type(value).__name__)\n\n\ndef publish(item, table, sqs):\n    if item.get(\"kind\") != \"EVENT\" or item.get(\"status\") != \"PENDING\":\n        return\n    # Sending first can duplicate delivery after a crash; marking first could lose the event.\n    sqs.send_message(\n        QueueUrl=os.environ[\"QUEUE_URL\"],\n        MessageBody=json.dumps(\n            item[\"event\"], default=json_default, ensure_ascii=True, separators=(\",\", \":\")\n        ),\n    )\n    table.update_item(\n        Key={\"pk\": item[\"pk\"]},\n        UpdateExpression=\"SET #status=:sent, expires_at=:expiry REMOVE pending\",\n        ConditionExpression=\"#status=:pending\",\n        ExpressionAttributeNames={\"#status\": \"status\"},\n        ExpressionAttributeValues={\n            \":sent\": \"SENT\",\n            \":pending\": \"PENDING\",\n            \":expiry\": int(time.time()) + 90 * 86400,\n        },\n    )\n\n\ndef handler(event, context):\n    table = boto3.resource(\"dynamodb\").Table(os.environ[\"STATE_TABLE\"])\n    sqs = boto3.client(\"sqs\")\n    if \"Records\" in event:\n        failures = []\n        deserializer = TypeDeserializer()\n        for record in event[\"Records\"]:\n            try:\n                item = {\n                    key: deserializer.deserialize(value)\n                    for key, value in record.get(\"dynamodb\", {}).get(\"NewImage\", {}).items()\n                }\n                publish(item, table, sqs)\n            except Exception:\n                LOGGER.exception(\"outbox publication failed\")\n                failures.append({\"itemIdentifier\": record[\"dynamodb\"][\"SequenceNumber\"]})\n        return {\"batchItemFailures\": failures}\n    # Pending rows have no TTL; an extended outage cannot expire unpublished matches.\n    key = None\n    while context.get_remaining_time_in_millis() > 10_000:\n        kwargs = {\n            \"IndexName\": \"PendingIndex\",\n            \"KeyConditionExpression\": Key(\"pending\").eq(\"PENDING\"),\n            \"Limit\": 100,\n        }\n        if key:\n            kwargs[\"ExclusiveStartKey\"] = key\n        response = table.query(**kwargs)\n        for item in response[\"Items\"]:\n            if context.get_remaining_time_in_millis() < 5000:\n                return\n            try:\n                publish(item, table, sqs)\n            except Exception:\n                LOGGER.exception(\"pending outbox publication failed\")\n        key = response.get(\"LastEvaluatedKey\")\n        if not key:\n            return\n"
+        }
+      },
+      "DependsOn": "PublisherLogs"
+    },
+    "StreamMapping": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "Properties": {
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "State",
+            "StreamArn"
+          ]
+        },
+        "FunctionName": {
+          "Ref": "Publisher"
+        },
+        "StartingPosition": "TRIM_HORIZON",
+        "BatchSize": 100,
+        "MaximumBatchingWindowInSeconds": 1,
+        "FunctionResponseTypes": [
+          "ReportBatchItemFailures"
+        ],
+        "BisectBatchOnFunctionError": true,
+        "MaximumRetryAttempts": 3,
+        "FilterCriteria": {
+          "Filters": [
+            {
+              "Pattern": "{\"dynamodb\": {\"NewImage\": {\"kind\": {\"S\": [\"EVENT\"]}, \"status\": {\"S\": [\"PENDING\"]}}}}"
+            }
+          ]
+        }
+      }
+    },
+    "RecoverySchedule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "publisher",
+            "Arn": {
+              "Fn::GetAtt": [
+                "Publisher",
+                "Arn"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "RecoveryPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "Publisher"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "RecoverySchedule",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "ErrorMetric": {
+      "Type": "AWS::Logs::MetricFilter",
+      "Properties": {
+        "LogGroupName": {
+          "Ref": "Logs"
+        },
+        "FilterPattern": "\"ERROR\"",
+        "MetricTransformations": [
+          {
+            "MetricName": "ReaderErrors",
+            "MetricNamespace": "CTWatch",
+            "MetricValue": "1",
+            "DefaultValue": 0
+          }
+        ]
+      }
+    },
+    "ErrorAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "CTWatch",
+        "MetricName": "ReaderErrors",
+        "Statistic": "Sum",
+        "Period": 300,
+        "EvaluationPeriods": 1,
+        "Threshold": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmDescription": "Inspect CT log errors; cursors stop on failed entries"
+      }
+    },
+    "PendingAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/SQS",
+        "MetricName": "ApproximateAgeOfOldestMessage",
+        "Statistic": "Maximum",
+        "Period": 300,
+        "EvaluationPeriods": 1,
+        "Threshold": 3600,
+        "ComparisonOperator": "GreaterThanThreshold",
+        "TreatMissingData": "notBreaching",
+        "Dimensions": [
+          {
+            "Name": "QueueName",
+            "Value": {
+              "Fn::GetAtt": [
+                "Queue",
+                "QueueName"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "Cluster": {
+      "Value": {
+        "Ref": "Cluster"
+      }
+    },
+    "Service": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Service",
+          "Name"
+        ]
+      }
+    },
+    "StateTable": {
+      "Value": {
+        "Ref": "State"
+      }
+    },
+    "QueueUrl": {
+      "Value": {
+        "Ref": "Queue"
+      }
+    },
+    "LogGroup": {
+      "Value": {
+        "Ref": "Logs"
+      }
+    }
+  }
+}

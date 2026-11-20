@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "caa_issuers": {},
+  "domains": [
+    {
+      "domain": "example.com",
+      "include_subdomains": true,
+      "variants": ["examp1e.com", "examplle.com"]
+    },
+    {
+      "domain": "paypal.com",
+      "include_subdomains": false,
+      "variants": []
+    }
+  ]
+}

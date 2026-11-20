@@ -1,0 +1,69 @@
+{
+  "direct_unique": 85597,
+  "websocket_unique": 84240,
+  "shared_unique": 69352,
+  "union_unique": 100485,
+  "direct_only": 16245,
+  "websocket_only": 14888,
+  "jaccard_fraction": 0.6901726625864557,
+  "ws_first_fraction_on_shared": 0.7827315722690045,
+  "ws_minus_direct_seconds_on_shared": {
+    "n": 69352,
+    "p50": -5.520082763671875,
+    "p95": 17.0435537109375
+  },
+  "mature_window": {
+    "direct_unique": 32008,
+    "websocket_unique": 32608,
+    "shared": 29821,
+    "direct_only": 2187,
+    "websocket_only": 2787
+  },
+  "resources": {
+    "direct": {
+      "entries": 291418,
+      "matches": 0,
+      "body_bytes": 471092769,
+      "elapsed_seconds": 140.16241240501404,
+      "cpu_seconds": 34.908071,
+      "network_rx_bytes": 500608491,
+      "memory_peak_bytes": 288665600
+    },
+    "websocket": {
+      "entries": 84240,
+      "matches": 0,
+      "json_bytes": 128975255,
+      "wire_bytes": 23621393,
+      "invalid_sha": 0,
+      "errors": [],
+      "negotiated_extensions": [
+        "PerMessageDeflate(remote_no_context_takeover=False, local_no_context_takeover=False, remote_max_window_bits=15, local_max_window_bits=15)"
+      ],
+      "elapsed_seconds": 120.06520795822144,
+      "cpu_seconds": 10.077773,
+      "network_rx_bytes": 25178369,
+      "memory_peak_bytes": 91439104
+    },
+    "aggregator": {
+      "cpu_seconds": 14.618034999999999,
+      "network_rx_bytes": 495709046,
+      "network_tx_bytes": 31912242,
+      "elapsed_seconds": 119.99757313728333,
+      "sampled_peak_memory_bytes": 68165632
+    }
+  },
+  "websocket_stack_cpu_seconds": 24.695808,
+  "websocket_stack_ingress_bytes": 520887415,
+  "direct_logs_head_ok": 80,
+  "direct_logs_with_data": 42,
+  "websocket_sources_with_data": 43,
+  "limitations": [
+    "Self-hosted Rust + Python lite client; not a hosted SLA or pure transport test.",
+    "Different catalogs, parsers, pacing and startup behavior can affect coverage.",
+    "Concurrent collectors share a public IP and can compete for rate limits.",
+    "WebSocket is plain local Docker with optional deflate; direct uses HTTPS.",
+    "CPU includes recording and initialization; final-drain windows may differ.",
+    "Timing is conditional on shared identities; unseen entries have no latency.",
+    "Precertificates remain separate; observed union is not ground truth."
+  ]
+}

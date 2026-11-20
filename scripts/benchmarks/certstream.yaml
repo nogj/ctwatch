@@ -1,0 +1,24 @@
+host: "0.0.0.0"
+port: 8080
+log_level: "warn"
+protocols:
+  websocket: true
+  sse: false
+  metrics: true
+  health: true
+  api: true
+streams:
+  full: false
+  lite: true
+  domains_only: false
+ct_log:
+  state_file: "/tmp/ctwatch-benchmark-state.json"
+  poll_interval_ms: 15000
+  fetch_concurrency: 1
+  partial_tile_wait_secs: 0
+  request_timeout_secs: 20
+  max_catchup_lag_entries: 0
+  max_catchup_lag_secs: 0
+dedup:
+  capacity: 200000
+  ttl_secs: 3600

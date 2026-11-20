@@ -1,0 +1,88 @@
+{
+  "catalogs": {
+    "chrome": {
+      "url": "https://www.gstatic.com/ct/log_list/v3/log_list.json",
+      "logs": 89,
+      "version": "98.0",
+      "timestamp": "2026-11-19T13:48:36Z",
+      "stale": false
+    },
+    "apple": {
+      "url": "https://valid.apple.com/ct/log_list/current_log_list.json",
+      "logs": 170,
+      "version": "525",
+      "timestamp": null,
+      "stale": false
+    }
+  },
+  "chrome_active": 80,
+  "apple_active": 44,
+  "shared_active": 37,
+  "union_active": 87,
+  "apple_only_active": [
+    {
+      "log_id": "d76d7d10d1a7f577c2c7e95fd700bff982c9335a65e1d0b3017317c0c8c56977",
+      "name": "Google 'Argon 2026H2' log",
+      "kind": "rfc6962",
+      "url": "https://ct.googleapis.com/logs/us1/argon2026h2/",
+      "head_verified": true,
+      "tree_size": 3501950757,
+      "root": "y/1N4/rB/Ziykeo4ouNW+YI1fByDVKL8XmJXZNTerzU="
+    },
+    {
+      "log_id": "d6d58da9d01753f36a4aa0c7574902afebc7dc2cd38cd9f764c80c89191e9f02",
+      "name": "Google 'Argon2027h1' log",
+      "kind": "rfc6962",
+      "url": "https://ct.googleapis.com/logs/us1/argon2027h1/",
+      "head_verified": true,
+      "tree_size": 1003958630,
+      "root": "X5UqMJVBWmftbNrjJR5B8fTQdsVUUWra4fepY7mufWQ="
+    },
+    {
+      "log_id": "d809553b944f7affc816196f944f85abb0f8fc5e8755260f15d12e72bb454b14",
+      "name": "Google 'Xenon 2026H2' log",
+      "kind": "rfc6962",
+      "url": "https://ct.googleapis.com/logs/eu1/xenon2026h2/",
+      "head_verified": true,
+      "tree_size": 3037394949,
+      "root": "zWDZb2hACBCOUQKsQ9lmrhA1/71XWyFWNR4F2bH+s9A="
+    },
+    {
+      "log_id": "44c2bd0ce9140e64a5c94a01930a5aa1bb35970e00ee111689682a1c44d7b566",
+      "name": "Google 'Xenon2027h1' log",
+      "kind": "rfc6962",
+      "url": "https://ct.googleapis.com/logs/eu1/xenon2027h1/",
+      "head_verified": true,
+      "tree_size": 844984485,
+      "root": "mHWBORYgVpDCPUoNzH+wXh+YW8hgN5DnENseKxJdL9o="
+    },
+    {
+      "log_id": "bae2a92932c5c05d1fa54d348130f09bfc8833164a15a1fbbef526283256c80b",
+      "name": "Cloudflare 'Raio2026h2a' log",
+      "kind": "static",
+      "url": "https://raio2026h2a.ct.cloudflare.com/",
+      "head_verified": true,
+      "tree_size": 736674196,
+      "root": "4SXFAY/AlKY4tBnLYbKTlNQEq5mnXEuvfE0T3gHGuSU="
+    },
+    {
+      "log_id": "8a3810bf408f5acf7b74de20c071903b7179cab0dbd768effa10f6298ea0680c",
+      "name": "Cloudflare 'Raio2027h1a' log",
+      "kind": "static",
+      "url": "https://raio2027h1a.ct.cloudflare.com/",
+      "head_verified": true,
+      "tree_size": 154390741,
+      "root": "HtTZDilYxz6QKUhFUdeVy+Zvl4x87RV7Ir+tNxKT1yc="
+    },
+    {
+      "log_id": "21ad481af5cb54f34b3abfaea0ff069a7b3c766fc3b690870bb46b152fb60bf9",
+      "name": "Cloudflare 'Raio2027h2a' log",
+      "kind": "static",
+      "url": "https://raio2027h2a.ct.cloudflare.com/",
+      "head_verified": true,
+      "tree_size": 19331,
+      "root": "mug8dw/OmfrQFsrgYFzqdAmtZojw0DHBP6aFeSkULZ4="
+    }
+  ],
+  "limitations": "Verified heads are not evidence of sustained entry ingestion or coverage."
+}

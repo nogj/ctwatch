@@ -1,0 +1,410 @@
+{
+  "trace_record_bytes": 42,
+  "unique_der_fingerprints_entire_window": 839437,
+  "first_cache_full_seconds_from_first_lookup": 619.3409266130002,
+  "observed_phases": {
+    "before_full": {
+      "observations": 1771343,
+      "duplicate_observations": 1270959,
+      "analysis_calls": 500384,
+      "reanalysis_calls": 0,
+      "cache_hits": 1219671,
+      "inflight_hits": 51288,
+      "reanalysis_fraction_of_analysis": 0.0,
+      "duplicate_leakage_fraction": 0.0
+    },
+    "after_full": {
+      "observations": 1926575,
+      "duplicate_observations": 1587522,
+      "analysis_calls": 397100,
+      "reanalysis_calls": 58047,
+      "cache_hits": 1507098,
+      "inflight_hits": 22377,
+      "reanalysis_fraction_of_analysis": 0.14617728531855956,
+      "duplicate_leakage_fraction": 0.03656453264899636
+    }
+  },
+  "observed_minute_buckets": {
+    "0": {
+      "observations": 140689,
+      "duplicate_observations": 74779,
+      "analysis_calls": 65910,
+      "reanalysis_calls": 0,
+      "cache_hits": 74475,
+      "inflight_hits": 304
+    },
+    "1": {
+      "observations": 204961,
+      "duplicate_observations": 160530,
+      "analysis_calls": 44431,
+      "reanalysis_calls": 0,
+      "cache_hits": 159787,
+      "inflight_hits": 743
+    },
+    "2": {
+      "observations": 230839,
+      "duplicate_observations": 170157,
+      "analysis_calls": 60682,
+      "reanalysis_calls": 0,
+      "cache_hits": 170092,
+      "inflight_hits": 65
+    },
+    "3": {
+      "observations": 151918,
+      "duplicate_observations": 119404,
+      "analysis_calls": 32514,
+      "reanalysis_calls": 0,
+      "cache_hits": 114256,
+      "inflight_hits": 5148
+    },
+    "4": {
+      "observations": 158476,
+      "duplicate_observations": 126285,
+      "analysis_calls": 32191,
+      "reanalysis_calls": 0,
+      "cache_hits": 122957,
+      "inflight_hits": 3328
+    },
+    "5": {
+      "observations": 148736,
+      "duplicate_observations": 113393,
+      "analysis_calls": 35343,
+      "reanalysis_calls": 0,
+      "cache_hits": 109425,
+      "inflight_hits": 3968
+    },
+    "6": {
+      "observations": 147360,
+      "duplicate_observations": 106820,
+      "analysis_calls": 40540,
+      "reanalysis_calls": 0,
+      "cache_hits": 105706,
+      "inflight_hits": 1114
+    },
+    "7": {
+      "observations": 230264,
+      "duplicate_observations": 159800,
+      "analysis_calls": 70464,
+      "reanalysis_calls": 0,
+      "cache_hits": 159686,
+      "inflight_hits": 114
+    },
+    "8": {
+      "observations": 191763,
+      "duplicate_observations": 124820,
+      "analysis_calls": 66943,
+      "reanalysis_calls": 0,
+      "cache_hits": 101596,
+      "inflight_hits": 23224
+    },
+    "9": {
+      "observations": 116839,
+      "duplicate_observations": 82129,
+      "analysis_calls": 34710,
+      "reanalysis_calls": 0,
+      "cache_hits": 71793,
+      "inflight_hits": 10336
+    },
+    "10": {
+      "observations": 177985,
+      "duplicate_observations": 126011,
+      "analysis_calls": 52154,
+      "reanalysis_calls": 180,
+      "cache_hits": 122586,
+      "inflight_hits": 3245
+    },
+    "11": {
+      "observations": 146207,
+      "duplicate_observations": 110116,
+      "analysis_calls": 39813,
+      "reanalysis_calls": 3722,
+      "cache_hits": 100685,
+      "inflight_hits": 5709
+    },
+    "12": {
+      "observations": 132982,
+      "duplicate_observations": 100585,
+      "analysis_calls": 33409,
+      "reanalysis_calls": 1012,
+      "cache_hits": 94825,
+      "inflight_hits": 4748
+    },
+    "13": {
+      "observations": 161582,
+      "duplicate_observations": 128785,
+      "analysis_calls": 38429,
+      "reanalysis_calls": 5632,
+      "cache_hits": 122895,
+      "inflight_hits": 258
+    },
+    "14": {
+      "observations": 153239,
+      "duplicate_observations": 127988,
+      "analysis_calls": 30622,
+      "reanalysis_calls": 5371,
+      "cache_hits": 122605,
+      "inflight_hits": 12
+    },
+    "15": {
+      "observations": 210958,
+      "duplicate_observations": 178029,
+      "analysis_calls": 36481,
+      "reanalysis_calls": 3552,
+      "cache_hits": 174474,
+      "inflight_hits": 3
+    },
+    "16": {
+      "observations": 258472,
+      "duplicate_observations": 214253,
+      "analysis_calls": 49285,
+      "reanalysis_calls": 5066,
+      "cache_hits": 208063,
+      "inflight_hits": 1124
+    },
+    "17": {
+      "observations": 180280,
+      "duplicate_observations": 153268,
+      "analysis_calls": 33897,
+      "reanalysis_calls": 6885,
+      "cache_hits": 146368,
+      "inflight_hits": 15
+    },
+    "18": {
+      "observations": 233999,
+      "duplicate_observations": 197375,
+      "analysis_calls": 46623,
+      "reanalysis_calls": 9999,
+      "cache_hits": 184095,
+      "inflight_hits": 3281
+    },
+    "19": {
+      "observations": 303985,
+      "duplicate_observations": 268520,
+      "analysis_calls": 49751,
+      "reanalysis_calls": 14286,
+      "cache_hits": 247308,
+      "inflight_hits": 6926
+    },
+    "20": {
+      "observations": 16384,
+      "duplicate_observations": 15434,
+      "analysis_calls": 3292,
+      "reanalysis_calls": 2342,
+      "cache_hits": 13092,
+      "inflight_hits": 0
+    }
+  },
+  "cache_hits_per_certificate": {
+    "population_entries": 839437,
+    "total": 2726769,
+    "percentiles_including_zero": {
+      "p50": 1,
+      "p90": 10,
+      "p95": 12,
+      "p99": 13,
+      "max": 19
+    },
+    "buckets": {
+      "0": 235166,
+      "1": 184915,
+      "2": 105543,
+      "3-4": 102801,
+      "5-9": 112600,
+      "10-19": 98412,
+      "20-49": 0,
+      "50-99": 0,
+      "100+": 0
+    },
+    "exact_histogram": {
+      "0": 235166,
+      "1": 184915,
+      "2": 105543,
+      "3": 57852,
+      "4": 44949,
+      "5": 20080,
+      "6": 16091,
+      "7": 19166,
+      "8": 25296,
+      "9": 31967,
+      "10": 27258,
+      "11": 19446,
+      "12": 14843,
+      "13": 30264,
+      "14": 3423,
+      "15": 1354,
+      "16": 1084,
+      "17": 696,
+      "18": 41,
+      "19": 3
+    },
+    "top_one_percent_entries": 8395,
+    "top_one_percent_share": 0.044567398265126235
+  },
+  "inflight_hits_per_certificate": {
+    "population_entries": 839437,
+    "total": 73665,
+    "percentiles_including_zero": {
+      "p50": 0,
+      "p90": 0,
+      "p95": 1,
+      "p99": 1,
+      "max": 4
+    },
+    "buckets": {
+      "0": 766707,
+      "1": 71854,
+      "2": 818,
+      "3-4": 58,
+      "5-9": 0,
+      "10-19": 0,
+      "20-49": 0,
+      "50-99": 0,
+      "100+": 0
+    },
+    "exact_histogram": {
+      "0": 766707,
+      "1": 71854,
+      "2": 818,
+      "3": 57,
+      "4": 1
+    },
+    "top_one_percent_entries": 8395,
+    "top_one_percent_share": 0.12665444919568317
+  },
+  "reanalyses_per_certificate": {
+    "population_entries": 839437,
+    "total": 58047,
+    "percentiles_including_zero": {
+      "p50": 0,
+      "p90": 0,
+      "p95": 1,
+      "p99": 1,
+      "max": 1
+    },
+    "buckets": {
+      "0": 781390,
+      "1": 58047,
+      "2": 0,
+      "3-4": 0,
+      "5-9": 0,
+      "10-19": 0,
+      "20-49": 0,
+      "50-99": 0,
+      "100+": 0
+    },
+    "exact_histogram": {
+      "0": 781390,
+      "1": 58047
+    },
+    "top_one_percent_entries": 8395,
+    "top_one_percent_share": 0.14462418385101727
+  },
+  "observations_per_certificate": {
+    "population_entries": 839437,
+    "total": 3697918,
+    "percentiles_including_zero": {
+      "p50": 3,
+      "p90": 11,
+      "p95": 13,
+      "p99": 14,
+      "max": 20
+    },
+    "buckets": {
+      "0": 0,
+      "1": 211755,
+      "2": 166064,
+      "3-4": 195205,
+      "5-9": 131379,
+      "10-19": 135031,
+      "20-49": 3,
+      "50-99": 0,
+      "100+": 0
+    },
+    "exact_histogram": {
+      "1": 211755,
+      "2": 166064,
+      "3": 140062,
+      "4": 55143,
+      "5": 45694,
+      "6": 21257,
+      "7": 18956,
+      "8": 22378,
+      "9": 23094,
+      "10": 30001,
+      "11": 29017,
+      "12": 22088,
+      "13": 14638,
+      "14": 32047,
+      "15": 4006,
+      "16": 1408,
+      "17": 1089,
+      "18": 696,
+      "19": 41,
+      "20": 3
+    },
+    "top_one_percent_entries": 8395,
+    "top_one_percent_share": 0.035324201347893595
+  },
+  "ideal_lru_capacity_curve": [
+    {
+      "capacity": 100000,
+      "hits": 2285405,
+      "analysis_calls": 1412513,
+      "reanalyses": 573076,
+      "hit_fraction": 0.6180247912473992,
+      "ttl_seconds": 3600
+    },
+    {
+      "capacity": 200000,
+      "hits": 2634815,
+      "analysis_calls": 1063103,
+      "reanalyses": 223666,
+      "hit_fraction": 0.7125130952065459,
+      "ttl_seconds": 3600
+    },
+    {
+      "capacity": 500000,
+      "hits": 2800293,
+      "analysis_calls": 897625,
+      "reanalyses": 58188,
+      "hit_fraction": 0.7572620593533983,
+      "ttl_seconds": 3600
+    },
+    {
+      "capacity": 1000000,
+      "hits": 2858481,
+      "analysis_calls": 839437,
+      "reanalyses": 0,
+      "hit_fraction": 0.7729974001586839,
+      "ttl_seconds": 3600
+    }
+  ],
+  "limitations": [
+    "Observed outcomes are traced at the actual cache lookup, including in-flight hits.",
+    "Reference set covers the complete capture and does not expire or evict entries.",
+    "Capacity simulation inserts results immediately and uses lookup order; actual worker completions can reorder insertions.",
+    "Simulation TTL is fixed from insertion; hits update LRU order but do not extend TTL.",
+    "Curve measures avoided analyses, not CPU time or output event deduplication.",
+    "The measured task includes trace I/O and page-cache overhead; the offline oracle does not.",
+    "Short capture and changing source activity do not establish a universal optimal size."
+  ],
+  "trace_sha256": "1fc099d75b3c0190040f2bc91547cdba93bab945d6b1dd109c5c5b9f6f845d14",
+  "trace_records": 3697918,
+  "trace_counters_reconcile_with_probe": true,
+  "capture": {
+    "started_utc": "2026-11-19T17:15:52.839443+00:00",
+    "elapsed_seconds": 1231.861,
+    "configured_seconds": 1200,
+    "workers": 3,
+    "watch_domains": 10004,
+    "certificate_cache_capacity": 500000,
+    "initial_seed_entries_per_log": 256
+  },
+  "pre_persistence_event_repetition_counts": {
+    "before_cache_full": {
+      "observations": 10,
+      "repeated_event_ids": 7
+    },
+    "after_cache_full": {}
+  }
+}

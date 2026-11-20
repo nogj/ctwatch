@@ -1,0 +1,113 @@
+{
+  "join_key": "SHA-256 of certificate DER; precertificate and final remain distinct",
+  "all_recorded": {
+    "both": 69352,
+    "direct_only": 16245,
+    "websocket_only": 14888,
+    "full_outer": 100485,
+    "direct_unique": 85597,
+    "websocket_unique": 84240
+  },
+  "same_reception_deadline": {
+    "both": 68634,
+    "direct_only": 15228,
+    "websocket_only": 15606,
+    "full_outer": 99468,
+    "direct_unique": 83862,
+    "websocket_unique": 84240
+  },
+  "central_acceptance_cohort": {
+    "both": 30377,
+    "direct_only": 1958,
+    "websocket_only": 2068,
+    "full_outer": 34403,
+    "direct_unique": 32335,
+    "websocket_unique": 32445
+  },
+  "acceptance_bins_using_min_timestamp_across_both_feeds": {
+    "both": {
+      "central_60s": 30377,
+      "first_30s": 13708,
+      "last_30s": 7928,
+      "before_start": 17339
+    },
+    "direct_only": {
+      "before_start": 11719,
+      "central_60s": 1958,
+      "first_30s": 2204,
+      "last_30s": 364
+    },
+    "websocket_only": {
+      "before_start": 7861,
+      "last_30s": 4012,
+      "central_60s": 2068,
+      "first_30s": 947
+    }
+  },
+  "direct_observations": 291418,
+  "websocket_observations": 84240,
+  "direct_repeated_observations": 205821,
+  "direct_multiplicity_histogram": {
+    "1": 33510,
+    "2": 20117,
+    "3": 8462,
+    "4": 3635,
+    "5": 1727,
+    "6": 1497,
+    "7": 1805,
+    "8": 3215,
+    "9": 3971,
+    "10": 2873,
+    "11": 1826,
+    "12": 1805,
+    "13": 766,
+    "14": 250,
+    "15": 109,
+    "16": 25,
+    "17": 4
+  },
+  "direct_first_seen_after_end": 1735,
+  "direct_only_first_seen_after_end": 1017,
+  "ws_only_by_first_reported_source": {
+    "Geomys Tuscolo2027h1": 4164,
+    "TrustAsia HETU2027": 2037,
+    "Let's Encrypt Willow2027h1": 1294,
+    "Google ParcelYard2027h1": 1201,
+    "Sectigo Elephant2027h1": 949,
+    "Google PlumbersArms2027h1": 932,
+    "Let's Encrypt Sycamore2027h1": 861,
+    "Microsec Eszigno2027h1": 754,
+    "IPng Networks Gouda2027h1": 507,
+    "IPng Networks Halloumi2027h1": 473,
+    "DigiCert Sphinx2027h1": 435,
+    "TrustAsia Luoshu2027": 358,
+    "DigiCert Wyvern2027h1": 236,
+    "GoDaddy Aquamarine2027h1": 181,
+    "Geomys Trastevere2027h1": 102,
+    "Microsec Eszigno2026h2": 94,
+    "Let's Encrypt Willow2026h2": 55,
+    "HARICA Selene2027h1": 45,
+    "DigiCert Sphinx2026h2": 38,
+    "Google ParcelYard2026h2": 34,
+    "Sectigo Tiger2026h2": 30,
+    "DigiCert Wyvern2026h2": 30,
+    "TrustAsia log2026b": 16,
+    "Let's Encrypt Sycamore2026h2": 13,
+    "Sectigo Tiger2027h1": 13,
+    "IPng Networks Halloumi2026h2a": 9,
+    "IPng Networks Gouda2026h2": 8,
+    "TrustAsia log2026a": 7,
+    "Geomys Trastevere2026h2": 4,
+    "Sectigo Elephant2026h2": 4,
+    "GoDaddy Aquamarine2026h2": 2,
+    "Sectigo Statue2027h1": 1,
+    "Google PlumbersArms2026h2": 1
+  },
+  "limitations": [
+    "Full outer union is observed evidence, not ecosystem ground truth.",
+    "Missing within a finite capture does not prove permanent loss.",
+    "Submission timestamps differ by log; common cohort uses minimum recorded timestamp.",
+    "WebSocket source is the first reported source after upstream dedup, not all sources.",
+    "Shared public IP, different catalogs, startup and draining confound comparison."
+  ]
+}

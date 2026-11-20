@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=78"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ctwatch"
+version = "0.1.0"
+description = "Resumable Certificate Transparency domain monitoring on AWS Fargate"
+requires-python = ">=3.12"
+dependencies = [
+  "boto3>=1.40,<2", "cryptography>=46,<47", "dnspython>=2.8,<3", "httpx>=0.28,<1", "idna>=3.10,<4"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "ruff>=0.14,<1", "cfn-lint>=1.40,<2", "moto[dynamodb,sqs]>=5,<6"]
+
+[project.scripts]
+ctwatch = "ctwatch.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

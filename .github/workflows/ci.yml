@@ -1,0 +1,27 @@
+name: checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.lock
+      - run: pip install -e '.[dev]'
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: python scripts/fetch_unicode.py --verify
+      - run: python infra/render.py --check
+      - run: cfn-lint infra/bootstrap.json infra/service.json
+      - run: pytest -q
+      - run: docker build -t ctwatch:ci .
+      - name: Check packaged runtime and data without AWS
+        run: |
+          docker run --rm --read-only --network none --cap-drop ALL \
+            --security-opt no-new-privileges \
+            -v "$PWD/scripts/container_check.py:/checks/container_check.py:ro" \
+            ctwatch:ci python /checks/container_check.py
